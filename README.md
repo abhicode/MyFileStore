@@ -3,9 +3,9 @@
 A secure and modern web application for managing your files. Upload, view, and download files with user authentication and role-based access. Built with **React**, **Spring Boot**, and **MongoDB**.
 
 <p float="left">
-  <img width="500" height="829" alt="Screenshot from 2025-08-31 03-15-31" src="https://github.com/user-attachments/assets/9caf3ebb-4b01-4c5b-9553-a729d8f069b6" />
+  <img width="1368" height="958" alt="Screenshot from 2025-08-31 03-33-47" src="https://github.com/user-attachments/assets/ec2d76ea-5ce7-4415-b948-7846da104334" />
   
-  <img width="500" height="829" alt="Screenshot from 2025-08-31 03-16-17" src="https://github.com/user-attachments/assets/c3380b62-a257-444a-8842-817ad3704dc0" />
+  <img width="1368" height="958" alt="Screenshot from 2025-08-31 03-34-05" src="https://github.com/user-attachments/assets/7b0009bc-25c3-4b2a-976a-c913fda8d3a0" />
 </p>
 ---
 
