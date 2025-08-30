@@ -1,0 +1,36 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: filestore-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build:
+      context: ./backend
+    container_name: filestore-backend
+    depends_on:
+      - mongo
+    env_file:
+      - .env
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/filestore
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./uploads:/app/uploads
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: filestore-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
