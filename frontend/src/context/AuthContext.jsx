@@ -6,6 +6,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loadingAuth, setLoadingAuth] = useState(true);
   const [error, setError] = useState(null);
 
   const [snackbar, setSnackbar] = useState({
@@ -27,6 +28,7 @@ export const AuthProvider = ({ children }) => {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+    setLoadingAuth(false);
   }, []);
 
   const login = async (username, password) => {
@@ -61,8 +63,9 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (username, password) => {
     try {
-      const res = await axios.post("/api/auth/register", { username, password });
+      const res = await axios.post("/api/auth/register", { username, password }, { withCredentials: true });
       setUser(res.data);
+      localStorage.setItem("user", JSON.stringify(res.data));
       showMessage("Registration successful!", "success");
     } catch (err) {
       const msg = err.response?.data?.message || "Registration failed";
@@ -72,7 +75,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, register, showMessage }}>
+    <AuthContext.Provider value={{ user, loadingAuth, login, logout, register, showMessage }}>
       {children}
 
       <Snackbar

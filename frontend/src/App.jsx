@@ -5,9 +5,12 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import UserHome from "./pages/UserHome";
 import { AuthContext } from "./context/AuthContext";
+import UserTrash from "./pages/UserTrash";
 
 function ProtectedRoute({ children }) {
-  const { user } = useContext(AuthContext);
+  const { user, loadingAuth } = useContext(AuthContext);
+
+  if (loadingAuth) return <div>Loading...</div>;
 
   if (!user) return <Navigate to="/login" replace />;
 
@@ -29,7 +32,15 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route
+          path="/trash"
+          element={
+            <ProtectedRoute>
+              <UserTrash />
+            </ProtectedRoute>
+          }
+        />
+        {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
       </Routes>
     </Router>
   );

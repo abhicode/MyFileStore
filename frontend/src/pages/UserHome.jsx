@@ -1,6 +1,7 @@
 import React, { useContext, useRef } from "react";
 import { FileContext } from "../context/FileContext";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Container,
@@ -18,9 +19,10 @@ import { Delete, Visibility, Download, Upload } from "@mui/icons-material";
 import axios from "axios";
 
 export default function UserHome() {
-  const { files, deleteFile, loading, error, fetchFiles } = useContext(FileContext);
+  const { files, moveToTrash, loading, error, fetchFiles } = useContext(FileContext);
   const { user, logout, showMessage } = useContext(AuthContext);
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
   const handleView = async (file) => {
     try {
@@ -97,8 +99,8 @@ export default function UserHome() {
 
   const handleDelete = async (fileId) => {
     try {
-      await deleteFile(fileId);
-      showMessage("File deleted", "warning");
+      await moveToTrash(fileId);
+      showMessage("File moved to trash", "warning");
     } catch (err) {
       console.error("Delete failed", err);
       showMessage("Delete failed", "error");
@@ -122,6 +124,9 @@ export default function UserHome() {
             </Button>
             <Button variant="outlined" color="secondary" onClick={logout}>
               Logout
+            </Button>
+            <Button variant="outlined" color="secondary" onClick={() => navigate("/trash")}>
+              Trash
             </Button>
           </Box>
         </Box>
