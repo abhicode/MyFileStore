@@ -48,14 +48,30 @@ public class FileService {
         document.setSize(multipartFile.getSize());
         document.setOwnerId(ownerId);
         document.setStoragePath(file.getAbsolutePath());
+        document.setActive(true);
 
         fileRepository.save(document);
         return mapToResponse(document);
     }
 
     public List<FileResponse> listUserFiles(String ownerId) {
-        return fileRepository.findByOwnerId(ownerId)
+        return fileRepository.findByOwnerIdAndActiveTrue(ownerId)
                 .stream().map(this::mapToResponse).collect(Collectors.toList());
+    }
+
+    public List<FileResponse> listUserFilesInTrash(String ownerId) {
+        return fileRepository.findByOwnerIdAndActiveFalse(ownerId)
+                .stream().map(this::mapToResponse).collect(Collectors.toList());
+    }
+
+    public FileResponse restoreFile(String id, String ownerId) throws FileNotFoundException {
+        FileDocument doc = fileRepository.findById(id)
+            .filter(f -> f.getOwnerId().equals(ownerId))
+            .orElseThrow(() -> new FileNotFoundException("File not found!"));
+
+        doc.setActive(true);
+        fileRepository.save(doc);
+        return mapToResponse(doc);
     }
 
     public FileDocument getFile(String fileId, String ownerId) throws FileNotFoundException {
@@ -81,7 +97,7 @@ public class FileService {
         return resp;
     }
 
-    public void deleteFile(String id, String ownerId) throws FileNotFoundException {
+    public void deleteFile(String id, String ownerId, boolean permDelete) throws FileNotFoundException {
         FileDocument doc = fileRepository.findById(id)
             .filter(f -> f.getOwnerId().equals(ownerId))
             .orElseThrow(() -> new FileNotFoundException("File not found!"));
@@ -90,8 +106,12 @@ public class FileService {
         if (file.exists() && !file.delete()) {
             throw new FileDeletionException("Failed to delete file from disk: " + file.getAbsolutePath());
         }
-
-        fileRepository.delete(doc);
+        if (!permDelete) {
+            doc.setActive(false);
+            fileRepository.save(doc);
+        }
+        else
+            fileRepository.delete(doc);
     }
 
 }

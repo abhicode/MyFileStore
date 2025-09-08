@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 
 export default function Register() {
-  const { user, showMessage } = useContext(AuthContext);
+  const { user, showMessage, register } = useContext(AuthContext);
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -40,15 +40,9 @@ export default function Register() {
 
     setLoading(true);
     try {
-      await axios.post(
-        "/api/auth/register",
-        { username, password },
-        { withCredentials: true }
-      );
+      await register(username, password);
       showMessage("Registration successful!", "success");
-      navigate("/login", {
-        state: { message: "You can now log in!", severity: "success" },
-      });
+      navigate("/home");
     } catch (err) {
       const msg = err.response?.data?.message || "Registration failed";
       showMessage(msg, "error");

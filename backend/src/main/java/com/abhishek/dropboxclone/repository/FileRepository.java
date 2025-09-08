@@ -9,4 +9,8 @@ import com.abhishek.dropboxclone.entity.FileDocument;
 public interface FileRepository extends MongoRepository<FileDocument, String> {
     List<FileDocument> findByOwnerId(String ownerId);
 
+    List<FileDocument> findByOwnerIdAndActiveTrue(String ownerId);
+
+     List<FileDocument> findByOwnerIdAndActiveFalse(String ownerId);
+
 }

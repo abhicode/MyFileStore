@@ -8,6 +8,7 @@ export const FileContext = createContext();
 export const FileProvider = ({ children }) => {
   const { user, showMessage } = useContext(AuthContext);
   const [files, setFiles] = useState([]);
+  const [trashFiles, setTrashFiles] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -25,6 +26,20 @@ export const FileProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       setFiles(res.data);
+    } catch {
+      showMessage("Failed to load files", "error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchTrashFiles = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get("/api/files/trash", {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+      setTrashFiles(res.data);
     } catch {
       showMessage("Failed to load files", "error");
     } finally {
@@ -70,7 +85,7 @@ export const FileProvider = ({ children }) => {
       await axios.delete(`/api/files/${fileId}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
-      setFiles((prev) => prev.filter((f) => f.id !== fileId));
+      setTrashFiles((prev) => prev.filter((f) => f.id !== fileId));
       showMessage("File deleted successfully", "info");
     } catch (err) {
       const msg = err.response?.data?.message || "Failed to delete file";
@@ -80,8 +95,42 @@ export const FileProvider = ({ children }) => {
     }
   };
 
+  const moveToTrash = async(fileId) => {
+    setLoading(true);
+    try {
+      await axios.delete(`/api/files/${fileId}/trash`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+      setFiles((prev) => prev.filter((f) => f.id !== fileId));
+      setTrashFiles((prev) => [...prev, files.find((f) => f.id === fileId)]);
+      showMessage("File moved to trash successfully", "info");
+    } catch (err) {
+      const msg = err.response?.data?.message || "Failed to delete file";
+      showMessage(msg, "error");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const restoreFile = async(fileId) => {
+    setLoading(true);
+    try {
+      await axios.post(`/api/files/${fileId}/restore`, {}, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+      setTrashFiles((prev) => prev.filter((f) => f.id !== fileId));
+      setFiles((prev) => [...prev, trashFiles.find((f) => f.id === fileId)]);
+      showMessage("File restored successfully", "success");
+    } catch (err) {
+      const msg = err.response?.data?.message || "Failed to delete file";
+      showMessage(msg, "error");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <FileContext.Provider value={{ files, loading, fetchFiles, uploadFile, deleteFile }}>
+    <FileContext.Provider value={{ files, trashFiles, loading, fetchFiles, uploadFile, deleteFile, fetchTrashFiles, moveToTrash, restoreFile }}>
       {/* Loading overlay */}
       <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={loading}>
         <CircularProgress color="inherit" />

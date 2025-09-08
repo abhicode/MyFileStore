@@ -19,4 +19,5 @@ public class FileDocument {
     private String ownerId;
     private Date uploadedAt = new Date();
     private String storagePath;
+    private boolean active;
 }

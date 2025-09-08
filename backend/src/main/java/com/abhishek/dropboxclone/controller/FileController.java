@@ -44,6 +44,19 @@ public class FileController {
         return ResponseEntity.ok(fileService.listUserFiles(ownerId));
     }
 
+    @GetMapping("/trash")
+    public ResponseEntity<List<FileResponse>> listUserFilesInTrash(Authentication auth) {
+        String ownerId = auth.getName();
+        return ResponseEntity.ok(fileService.listUserFilesInTrash(ownerId));
+    }
+
+    @PostMapping("/{id}/restore")
+    public ResponseEntity<FileResponse> restoreFile(@PathVariable String id, Authentication auth) throws FileNotFoundException {
+        String ownerId = auth.getName();
+        return ResponseEntity.ok(fileService.restoreFile(id, ownerId));
+
+    }
+
     @GetMapping("/{id}/download")
     public ResponseEntity<Resource> download(@PathVariable String id, Authentication auth) throws FileNotFoundException {
         String ownerId = auth.getName();
@@ -65,7 +78,14 @@ public class FileController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFile(@PathVariable String id, Authentication auth) throws FileNotFoundException {
         String ownerId = auth.getName();
-        fileService.deleteFile(id, ownerId);
+        fileService.deleteFile(id, ownerId, true);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/trash")
+    public ResponseEntity<Void> moveToTrash(@PathVariable String id, Authentication auth) throws FileNotFoundException {
+        String ownerId = auth.getName();
+        fileService.deleteFile(id, ownerId, false);
         return ResponseEntity.noContent().build();
     }
 }
