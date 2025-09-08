@@ -4,11 +4,6 @@ A secure and modern web application for managing your files. Upload, view, and d
 
 <p float="left">
   <img width="1197" height="938" alt="Screenshot from 2025-09-08 22-30-27" src="https://github.com/user-attachments/assets/2dc16031-e483-403d-a3ce-648c10aac294" />
-
-  <img width="1197" height="938" alt="Screenshot from 2025-09-08 22-30-45" src="https://github.com/user-attachments/assets/a0aae915-223a-43a2-baf3-c7961f79bb0a" />
-
-  <img width="1197" height="938" alt="Screenshot from 2025-09-08 22-31-08" src="https://github.com/user-attachments/assets/5f8d8c31-9afb-4565-abdf-ff3e71b87243" />
-
 </p>
 ---
 
